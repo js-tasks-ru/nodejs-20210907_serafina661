@@ -1,6 +1,7 @@
-const url = require('url');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
+const answerHandler = require('./answerHandler');
 
 const server = new http.Server();
 
@@ -12,7 +13,19 @@ server.on('request', (req, res) => {
 
   switch (req.method) {
     case 'GET':
-
+      if (pathname === '' || pathname.includes('/')) {
+        return answerHandler(400, 'Not Found', res);
+      } else {
+        const stream = fs.createReadStream(filepath);
+        stream.pipe(res);
+        stream.on('error', (err) => {
+          if (err.code === 'ENOENT') {
+            return answerHandler(404, 'Not Found', res);
+          } else {
+            return answerHandler(500, 'Internal Server Error', res);
+          }
+        });
+      }
       break;
 
     default:
