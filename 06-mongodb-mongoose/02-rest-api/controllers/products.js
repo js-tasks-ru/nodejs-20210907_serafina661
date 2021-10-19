@@ -6,7 +6,7 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
 
   if (!subcategory) return next();
 
-  const productsBySubcategory = await Product.find(subcategory);
+  const productsBySubcategory = await Product.find({subcategory: subcategory});
 
   ctx.status = 200;
   if (productsBySubcategory.length) {
@@ -16,6 +16,7 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
         title: product.title,
         images: product.images,
         category: product.category,
+        subcategory: product.subcategory,
         price: product.price,
         description: product.description,
       })),
@@ -37,6 +38,7 @@ module.exports.productList = async function productList(ctx, next) {
         title: product.title,
         images: product.images,
         category: product.category,
+        subcategory: product.subcategory,
         price: product.price,
         description: product.description,
       })),
@@ -60,6 +62,7 @@ module.exports.productById = async function productById(ctx, next) {
           title: productById.title,
           images: productById.images,
           category: productById.category,
+          subcategory: productById.subcategory,
           price: productById.price,
           description: productById.description,
         },
