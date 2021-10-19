@@ -2,12 +2,11 @@ const Product = require('../models/Product');
 
 module.exports.productsByQuery = async function productsByQuery(ctx, next) {
   const search = ctx.query;
-  if (search) {
-    const products = await Product.find(
-        {$text: {$search: search}},
-        {score: {$meta: 'search'}},
-    ).sort({score: {$meta: 'search'}});
-
+  const products = await Product.find(
+      {$text: {$search: search}},
+      {score: {$meta: 'textScore'}},
+  ).sort({score: {$meta: 'textScore'}});
+  if (products.length) {
     ctx.body = {
       products: products.map((product) => ({
         id: product._id,
@@ -19,6 +18,8 @@ module.exports.productsByQuery = async function productsByQuery(ctx, next) {
       })),
     };
   } else {
-    return next();
+    ctx.body = {
+      products: [],
+    };
   }
 };

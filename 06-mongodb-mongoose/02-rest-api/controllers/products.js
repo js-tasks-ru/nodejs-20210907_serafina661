@@ -2,11 +2,11 @@ const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 module.exports.productsBySubcategory = async function productsBySubcategory(ctx, next) {
-  const {subcategory} = ctx.query;
+  const subcategory = ctx.query;
 
   if (!subcategory) return next();
 
-  const productsBySubcategory = await Product.find(subcategory);
+  const productsBySubcategory = await Product.find({subcategory: subcategory});
 
   ctx.status = 200;
   ctx.body = {
@@ -22,7 +22,7 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
 };
 
 module.exports.productList = async function productList(ctx, next) {
-  const products = await Product.find({});
+  const products = await Product.find();
   ctx.status = 200;
   ctx.body = {
     products: products.map((product) => ({
@@ -39,7 +39,7 @@ module.exports.productList = async function productList(ctx, next) {
 module.exports.productById = async function productById(ctx, next) {
   const id = ctx.params.id;
   if (mongoose.Types.ObjectId.isValid(id)) {
-    const productById = await Product.find(id);
+    const productById = await Product.findById(id);
     if (productById) {
       ctx.status = 200;
       ctx.body = {
