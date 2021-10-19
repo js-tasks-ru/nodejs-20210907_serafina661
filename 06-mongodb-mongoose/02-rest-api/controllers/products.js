@@ -2,38 +2,50 @@ const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
 module.exports.productsBySubcategory = async function productsBySubcategory(ctx, next) {
-  const subcategory = ctx.query;
+  const {subcategory} = ctx.query;
 
   if (!subcategory) return next();
 
-  const productsBySubcategory = await Product.find({subcategory: subcategory});
+  const productsBySubcategory = await Product.find(subcategory);
 
   ctx.status = 200;
-  ctx.body = {
-    products: productsBySubcategory.map((product) => ({
-      id: product._id,
-      title: product.title,
-      images: product.images,
-      category: product.category,
-      price: product.price,
-      description: product.description,
-    })),
-  };
+  if (productsBySubcategory.length) {
+    ctx.body = {
+      products: productsBySubcategory.map((product) => ({
+        id: product._id,
+        title: product.title,
+        images: product.images,
+        category: product.category,
+        price: product.price,
+        description: product.description,
+      })),
+    };
+  } else {
+    ctx.body = {
+      products: [],
+    };
+  }
 };
 
 module.exports.productList = async function productList(ctx, next) {
   const products = await Product.find();
   ctx.status = 200;
-  ctx.body = {
-    products: products.map((product) => ({
-      id: product._id,
-      title: product.title,
-      images: product.images,
-      category: product.category,
-      price: product.price,
-      description: product.description,
-    })),
-  };
+  if (products.length) {
+    ctx.body = {
+      products: products.map((product) => ({
+        id: product._id,
+        title: product.title,
+        images: product.images,
+        category: product.category,
+        price: product.price,
+        description: product.description,
+      })),
+    };
+  } else {
+    ctx.body = {
+      products: [],
+    };
+  }
 };
 
 module.exports.productById = async function productById(ctx, next) {
